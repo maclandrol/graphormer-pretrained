@@ -11,10 +11,6 @@ from graphormer_pretrained.data.collator import collator
 
 from typing import Optional, Union
 from torch_geometric.data import Data as PYGDataset
-from dgl.data import DGLDataset
-from graphormer_pretrained.data.dgl_datasets import (
-    DGLDatasetLookupTable,
-    GraphormerDGLDataset,
 )
 from graphormer_pretrained.data.pyg_datasets import (
     PYGDatasetLookupTable,
@@ -68,7 +64,7 @@ class TargetDataset(FairseqDataset):
 class GraphormerDataset:
     def __init__(
         self,
-        dataset: Optional[Union[PYGDataset, DGLDataset]] = None,
+        dataset: Optional[PYGDataset] = None,
         dataset_spec: Optional[str] = None,
         dataset_source: Optional[str] = None,
         seed: int = 0,
@@ -77,23 +73,13 @@ class GraphormerDataset:
         test_idx=None,
     ):
         super().__init__()
-        if dataset is not None:
-            if dataset_source == "dgl":
-                self.dataset = GraphormerDGLDataset(
-                    dataset,
-                    seed=seed,
-                    train_idx=train_idx,
-                    valid_idx=valid_idx,
-                    test_idx=test_idx,
-                )
-            elif dataset_source == "pyg":
+        if dataset is not None:    
+            if dataset_source == "pyg":
                 self.dataset = GraphormerPYGDataset(
                     dataset, train_idx=train_idx, valid_idx=valid_idx, test_idx=test_idx
                 )
             else:
-                raise ValueError("customized dataset can only have source pyg or dgl")
-        elif dataset_source == "dgl":
-            self.dataset = DGLDatasetLookupTable.GetDGLDataset(dataset_spec, seed=seed)
+                raise ValueError("customized dataset can only have source pyg")
         elif dataset_source == "pyg":
             self.dataset = PYGDatasetLookupTable.GetPYGDataset(dataset_spec, seed=seed)
         elif dataset_source == "ogb":

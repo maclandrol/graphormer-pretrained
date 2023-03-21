@@ -1,4 +1,4 @@
-<img src="docs/logo-10.png" width=100%> 
+<img src="assets/logo-10.png" width=100%> 
 
 Graphormer is a deep learning package that allows researchers and developers to train custom models for molecule modeling tasks. It aims to accelerate the research and application in AI for molecule science, such as material discovery, drug discovery, etc. [Project website](https://www.microsoft.com/en-us/research/project/graphormer/).
 
@@ -7,9 +7,13 @@ Graphormer is a deep learning package that allows researchers and developers to 
 
 __The purpose of this fork is to package Graphormer for systematic uses and easier installation.__
 
-To install, run `mamba install -c pytorch -c pyg -c dglteam -c invivoai -c conda-forge 'graphormer-pretrained'`
+To install, run `mamba install -c conda-forge 'graphormer-pretrained'`
 
 Please refer to the original Graphormer github repo: https://github.com/microsoft/Graphormer for any issues related to Graphormer. 
+
+### What's different ?
+
+- We remove support for dgl due to packaging constraints
 
 __More information on the Graphormer project is available below !__
 

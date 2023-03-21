@@ -58,7 +58,7 @@ class GraphPredictionConfig(FairseqDataclass):
 
     dataset_source: str = field(
         default="pyg",
-        metadata={"help": "source of graph dataset, can be: pyg, dgl, ogb, smiles"},
+        metadata={"help": "source of graph dataset, can be: pyg, ogb, smiles"},
     )
 
     num_atoms: int = field(
