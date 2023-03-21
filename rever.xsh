@@ -18,5 +18,5 @@ $CHANGELOG_NEWS = 'news'
 $ACTIVITIES = ['check', 'authors', 'changelog', 'version_bump', 'tag', 'push_tag', 'ghrelease']
 
 $VERSION_BUMP_PATTERNS = [('graphormer/_version.py', r'__version__\s*=.*', "__version__ = \"$VERSION\""),
-                          ('setup.py', r'version\s*=.*,', "version=\"$VERSION\",")
+                          ('pyproject.toml', r'version\s*=.* # project', "version = \"$VERSION\" # project")
                           ]
