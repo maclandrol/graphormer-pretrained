@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "graphormer_pretrained"
 description = "Packaging of Graphormer is a deep learning package by Microsoft that allows researchers and developers to train custom models for molecule modeling tasks."
-version = "0.0.1" # project
+version = "0.1.0" # project
 authors = [
     { name = "Emmanuel Noutahi", email = "emmanuel@valencediscovery.com" },
 ]
