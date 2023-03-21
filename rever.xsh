@@ -2,7 +2,7 @@
 
 $PROJECT = $GITHUB_REPO  = 'graphormer-pretrained'
 $GITHUB_ORG = 'valence-platform'
-$PUSH_TAG_REMOTE = 'git@github.com:maclandrolgraphormer-pretrained.git'
+$PUSH_TAG_REMOTE = 'git@github.com:maclandrol/graphormer-pretrained.git'
 
 # Logic
 
