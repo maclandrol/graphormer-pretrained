@@ -11,7 +11,11 @@ install_requires = [
 
 kw = dict(include_dirs=[numpy.get_include()])
 ext_modules = [
-    Extension("graphormer_pretrained.data.algos", sources=["graphormer_pretrained/data/algos.pyx"], **kw),
+    Extension(
+        "graphormer_pretrained.data.algos",
+        sources=["graphormer_pretrained/data/algos.pyx"],
+        **kw
+    ),
 ]
 setup(
     name="graphormer_pretrained",

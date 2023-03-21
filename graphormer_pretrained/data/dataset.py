@@ -72,7 +72,7 @@ class GraphormerDataset:
         test_idx=None,
     ):
         super().__init__()
-        if dataset is not None:    
+        if dataset is not None:
             if dataset_source == "pyg":
                 self.dataset = GraphormerPYGDataset(
                     dataset, train_idx=train_idx, valid_idx=valid_idx, test_idx=test_idx
