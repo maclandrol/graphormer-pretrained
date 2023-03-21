@@ -40,6 +40,9 @@ include = ["graphormer_pretrained", "graphormer_pretrained.*"]
 exclude = []
 namespaces = true
 
+[tool.setuptools.package-data]
+"graphormer_pretrained.data" = ["*"]
+
 [tool.black]
 line-length = 110
 target-version = ['py39', 'py310']
