@@ -42,6 +42,6 @@ jobs:
           packages-dir: dist/
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
         with:
           body: "See [CHANGELOGS.rst](https://github.com/maclandrol/graphormer-pretrained/blob/main/CHANGELOG.rst)."
