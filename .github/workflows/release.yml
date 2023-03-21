@@ -1,8 +1,12 @@
-name: pypi-release
+name: release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
 
 jobs:
   upload-to-pypi:
@@ -36,3 +40,8 @@ jobs:
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
           packages-dir: dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: "See [CHANGELOGS.rst](https://github.com/maclandrol/graphormer-pretrained/blob/main/CHANGELOG.rst)."
