@@ -2,5 +2,9 @@
   email: emmanuel.noutahi@hotmail.ca
   aliases:
   - maclandrol
-  num_commits: 1
+  num_commits: 6
   first_commit: 2023-03-21 14:09:35
+- name: Hadrien Mary
+  email: hadrien.mary@gmail.com
+  num_commits: 5
+  first_commit: 2023-03-21 17:40:42
