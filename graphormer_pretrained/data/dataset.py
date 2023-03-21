@@ -11,7 +11,6 @@ from graphormer_pretrained.data.collator import collator
 
 from typing import Optional, Union
 from torch_geometric.data import Data as PYGDataset
-)
 from graphormer_pretrained.data.pyg_datasets import (
     PYGDatasetLookupTable,
     GraphormerPYGDataset,

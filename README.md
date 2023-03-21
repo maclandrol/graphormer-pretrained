@@ -13,7 +13,7 @@ Please refer to the original Graphormer github repo: https://github.com/microsof
 
 ### What's different ?
 
-- We remove support for dgl due to packaging constraints
+- We removed support for dgl due to packaging constraints
 
 __More information on the Graphormer project is available below !__
 
