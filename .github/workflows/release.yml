@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  upload-to-pypi:
+  release:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
