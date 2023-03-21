@@ -213,9 +213,7 @@ class GraphPredictionTask(FairseqTask):
         )
 
         if split == "train" and self.cfg.train_epoch_shuffle:
-            dataset = EpochShuffleDataset(
-                dataset, size=len(dataset), seed=self.cfg.seed
-            )
+            dataset = EpochShuffleDataset(dataset, size=len(dataset), seed=self.cfg.seed)
 
         logger.info("Loaded {0} with #samples: {1}".format(split, len(dataset)))
 
@@ -252,16 +250,12 @@ class GraphPredictionTask(FairseqTask):
 class GraphPredictionWithFlagConfig(GraphPredictionConfig):
     flag_m: int = field(
         default=3,
-        metadata={
-            "help": "number of iterations to optimize the perturbations with flag objectives"
-        },
+        metadata={"help": "number of iterations to optimize the perturbations with flag objectives"},
     )
 
     flag_step_size: float = field(
         default=1e-3,
-        metadata={
-            "help": "learing rate of iterations to optimize the perturbations with flag objective"
-        },
+        metadata={"help": "learing rate of iterations to optimize the perturbations with flag objective"},
     )
 
     flag_mag: float = field(
@@ -282,9 +276,7 @@ class GraphPredictionWithFlagTask(GraphPredictionTask):
         self.flag_step_size = cfg.flag_step_size
         self.flag_mag = cfg.flag_mag
 
-    def train_step(
-        self, sample, model, criterion, optimizer, update_num, ignore_grad=False
-    ):
+    def train_step(self, sample, model, criterion, optimizer, update_num, ignore_grad=False):
         """
         Do forward and backward, and return the loss as computed by *criterion*
         for the given *model* and *sample*.
@@ -312,11 +304,7 @@ class GraphPredictionWithFlagTask(GraphPredictionTask):
         n_graph, n_node = batched_data.shape[:2]
         perturb_shape = n_graph, n_node, model.encoder_embed_dim
         if self.flag_mag > 0:
-            perturb = (
-                torch.FloatTensor(*perturb_shape)
-                .uniform_(-1, 1)
-                .to(batched_data.device)
-            )
+            perturb = torch.FloatTensor(*perturb_shape).uniform_(-1, 1).to(batched_data.device)
             perturb = perturb * self.flag_mag / math.sqrt(perturb_shape[-1])
         else:
             perturb = (
@@ -335,15 +323,13 @@ class GraphPredictionWithFlagTask(GraphPredictionTask):
         for _ in range(self.flag_m - 1):
             optimizer.backward(loss)
             total_loss += loss.detach()
-            perturb_data = perturb.detach() + self.flag_step_size * torch.sign(
-                perturb.grad.detach()
-            )
+            perturb_data = perturb.detach() + self.flag_step_size * torch.sign(perturb.grad.detach())
             if self.flag_mag > 0:
                 perturb_data_norm = torch.norm(perturb_data, dim=-1).detach()
                 exceed_mask = (perturb_data_norm > self.flag_mag).to(perturb_data)
-                reweights = (
-                    self.flag_mag / perturb_data_norm * exceed_mask + (1 - exceed_mask)
-                ).unsqueeze(-1)
+                reweights = (self.flag_mag / perturb_data_norm * exceed_mask + (1 - exceed_mask)).unsqueeze(
+                    -1
+                )
                 perturb_data = (perturb_data * reweights).detach()
             perturb.data = perturb_data.data
             perturb.grad[:] = 0

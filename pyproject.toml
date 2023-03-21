@@ -1,2 +1,52 @@
 [build-system]
 requires = ["setuptools", "wheel", "cython", "numpy"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphormer_pretrained"
+description = "Packaging of Graphormer is a deep learning package by Microsoft that allows researchers and developers to train custom models for molecule modeling tasks."
+version = "0.0.1" # project
+authors = [
+    { name = "Emmanuel Noutahi", email = "emmanuel@valencediscovery.com" },
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
+    "tqdm",
+    "gcsfs",
+    "numpy",
+    "torch",
+    "torch-geometric",
+    "ogb",
+    "tensorboardX",
+    "fairseq",
+    "lmdb",
+    "datamol",
+]
+
+[project.urls]
+"Source Code" = "https://github.com/maclandrol/graphormer-pretrained"
+"Bug Tracker" = "https://github.com/maclandrol/graphormer-pretrained/issues"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+license-files = ["LICENSE"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["graphormer_pretrained", "graphormer_pretrained.*"]
+exclude = []
+namespaces = true
+
+[tool.black]
+line-length = 110
+target-version = ['py39', 'py310']
+include = '\.pyi?$'
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--verbose"
+testpaths = ["tests"]
+filterwarnings = []

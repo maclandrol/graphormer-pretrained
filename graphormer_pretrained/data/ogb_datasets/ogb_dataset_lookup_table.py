@@ -102,7 +102,5 @@ class OGBDatasetLookupTable:
         return (
             None
             if inner_dataset is None
-            else GraphormerPYGDataset(
-                inner_dataset, seed, train_idx, valid_idx, test_idx
-            )
+            else GraphormerPYGDataset(inner_dataset, seed, train_idx, valid_idx, test_idx)
         )

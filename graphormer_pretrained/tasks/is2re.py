@@ -88,18 +88,12 @@ class PBCDataset:
         tags = data["tags"]
 
         offsets = torch.matmul(self.cell_offsets, cell).view(self.n_cells, 1, 3)
-        expand_pos = (pos.unsqueeze(0).expand(self.n_cells, -1, -1) + offsets).view(
-            -1, 3
-        )
-        expand_pos_relaxed = (
-            pos.unsqueeze(0).expand(self.n_cells, -1, -1) + offsets
-        ).view(-1, 3)
+        expand_pos = (pos.unsqueeze(0).expand(self.n_cells, -1, -1) + offsets).view(-1, 3)
+        expand_pos_relaxed = (pos.unsqueeze(0).expand(self.n_cells, -1, -1) + offsets).view(-1, 3)
         src_pos = pos[tags > 1] if self.filter_by_tag else pos
 
         dist: Tensor = (src_pos.unsqueeze(1) - expand_pos.unsqueeze(0)).norm(dim=-1)
-        used_mask = (dist < self.cutoff).any(dim=0) & tags.ne(2).repeat(
-            self.n_cells
-        )  # not copy ads
+        used_mask = (dist < self.cutoff).any(dim=0) & tags.ne(2).repeat(self.n_cells)  # not copy ads
         used_expand_pos = expand_pos[used_mask]
         used_expand_pos_relaxed = expand_pos_relaxed[used_mask]
 
@@ -116,9 +110,7 @@ class PBCDataset:
                     torch.zeros_like(used_expand_tags, dtype=torch.bool),
                 ]
             ),
-            deltapos=torch.cat(
-                [pos_relaxed - pos, used_expand_pos_relaxed - used_expand_pos], dim=0
-            ),
+            deltapos=torch.cat([pos_relaxed - pos, used_expand_pos_relaxed - used_expand_pos], dim=0),
             relaxed_energy=data["relaxed_energy"],
         )
 
@@ -127,9 +119,7 @@ def pad_1d(samples: Sequence[Tensor], fill=0, multiplier=8):
     max_len = max(x.size(0) for x in samples)
     max_len = (max_len + multiplier - 1) // multiplier * multiplier
     n_samples = len(samples)
-    out = torch.full(
-        (n_samples, max_len, *samples[0].shape[1:]), fill, dtype=samples[0].dtype
-    )
+    out = torch.full((n_samples, max_len, *samples[0].shape[1:]), fill, dtype=samples[0].dtype)
     for i in range(n_samples):
         x_len = samples[i].size(0)
         out[i][:x_len] = samples[i]

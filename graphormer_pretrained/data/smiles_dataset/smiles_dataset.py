@@ -39,9 +39,7 @@ class GraphormerSMILESDataset(GraphormerPYGDataset):
         self.valid_data = self.index_select(valid_idx)
         self.test_data = self.index_select(test_idx)
 
-    def __get_graph_metainfo(
-        self, max_node: int, multi_hop_max_dist: int, spatial_pos_max: int
-    ):
+    def __get_graph_metainfo(self, max_node: int, multi_hop_max_dist: int, spatial_pos_max: int):
         self.max_node = min(
             max_node,
             torch.max(self.dataset[i][0].num_nodes() for i in range(len(self.dataset))),
@@ -67,14 +65,10 @@ class GraphormerSMILESDataset(GraphormerPYGDataset):
 class GraphormerInferenceDataset(GraphormerSMILESDataset):
     """Inference dataset for graphormer"""
 
-    def __init__(
-        self, smiles: List[str], multi_hop_max_dist: int, spatial_pos_max: int
-    ):
+    def __init__(self, smiles: List[str], multi_hop_max_dist: int, spatial_pos_max: int):
         self.dataset = smiles
         self.num_class = 1
-        self.preprocessed_dataset = self._build_graph_info(
-            multi_hop_max_dist, spatial_pos_max
-        )
+        self.preprocessed_dataset = self._build_graph_info(multi_hop_max_dist, spatial_pos_max)
 
     def _build_graph_info(self, multi_hop_max_dist: int, spatial_pos_max: int):
         max_dist = 0

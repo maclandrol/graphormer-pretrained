@@ -37,9 +37,7 @@ def preprocess_item(item):
     if len(edge_attr.size()) == 1:
         edge_attr = edge_attr[:, None]
     attn_edge_type = torch.zeros([N, N, edge_attr.size(-1)], dtype=torch.long)
-    attn_edge_type[edge_index[0, :], edge_index[1, :]] = (
-        convert_to_single_emb(edge_attr) + 1
-    )
+    attn_edge_type[edge_index[0, :], edge_index[1, :]] = convert_to_single_emb(edge_attr) + 1
 
     shortest_path_result, path = algos.floyd_warshall(adj.numpy())
     max_dist = np.amax(shortest_path_result)

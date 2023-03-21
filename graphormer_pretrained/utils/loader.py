@@ -61,14 +61,10 @@ def load_state_dict_from_fsspec_url(
     """
     # Issue warning to move data if old env is set
     if os.getenv("TORCH_MODEL_ZOO"):
-        warnings.warn(
-            "TORCH_MODEL_ZOO is deprecated, please use env TORCH_HOME instead"
-        )
+        warnings.warn("TORCH_MODEL_ZOO is deprecated, please use env TORCH_HOME instead")
 
     if model_dir is None:
-        model_dir = dm.fs.get_cache_dir(
-            app_name="graphformer-pretrained", suffix="models"
-        )
+        model_dir = dm.fs.get_cache_dir(app_name="graphformer-pretrained", suffix="models")
 
     try:
         os.makedirs(model_dir)
@@ -97,17 +93,13 @@ def load_state_dict_from_fsspec_url(
 
 
 def load_pretrained_model(pretrained_model_name, verbose=False):
-    pretrained_model_path = PRETRAINED_MODEL_URLS.get(
-        pretrained_model_name, pretrained_model_name
-    )
+    pretrained_model_path = PRETRAINED_MODEL_URLS.get(pretrained_model_name, pretrained_model_name)
     if verbose and pretrained_model_path not in PRETRAINED_MODEL_URLS:
         logger.warning(
             f"Pretrained model: {pretrained_model_name} isnot a recognized Graphormer pretrained model !"
         )
     if not dist.is_initialized():
-        return load_state_dict_from_fsspec_url(pretrained_model_path, progress=True)[
-            "model"
-        ]
+        return load_state_dict_from_fsspec_url(pretrained_model_path, progress=True)["model"]
     else:
         pretrained_model = load_state_dict_from_fsspec_url(
             pretrained_model_path,

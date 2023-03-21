@@ -58,9 +58,7 @@ class GraphPredictionBinaryLogLoss(FairseqCriterion):
         metrics.log_scalar("loss", loss_sum / sample_size, sample_size, round=3)
         if len(logging_outputs) > 0 and "ncorrect" in logging_outputs[0]:
             ncorrect = sum(log.get("ncorrect", 0) for log in logging_outputs)
-            metrics.log_scalar(
-                "accuracy", 100.0 * ncorrect / sample_size, sample_size, round=1
-            )
+            metrics.log_scalar("accuracy", 100.0 * ncorrect / sample_size, sample_size, round=1)
 
     @staticmethod
     def logging_outputs_can_be_summed() -> bool:

@@ -41,14 +41,10 @@ class SelfMultiheadAttention(nn.Module):
         self.dropout = dropout
 
         self.head_dim = embed_dim // num_heads
-        assert (
-            self.head_dim * num_heads == self.embed_dim
-        ), "embed_dim must be divisible by num_heads"
+        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
         self.scaling = (self.head_dim * scaling_factor) ** -0.5
 
-        self.in_proj: Callable[[Tensor], Tensor] = nn.Linear(
-            embed_dim, embed_dim * 3, bias=bias
-        )
+        self.in_proj: Callable[[Tensor], Tensor] = nn.Linear(embed_dim, embed_dim * 3, bias=bias)
         self.out_proj = nn.Linear(embed_dim, embed_dim, bias=bias)
 
     def forward(
@@ -222,16 +218,13 @@ class NodeTaskHead(nn.Module):
         delta_pos: Tensor,
     ) -> Tensor:
         bsz, n_node, _ = query.size()
-        q = (
-            self.q_proj(query).view(bsz, n_node, self.num_heads, -1).transpose(1, 2)
-            * self.scaling
-        )
+        q = self.q_proj(query).view(bsz, n_node, self.num_heads, -1).transpose(1, 2) * self.scaling
         k = self.k_proj(query).view(bsz, n_node, self.num_heads, -1).transpose(1, 2)
         v = self.v_proj(query).view(bsz, n_node, self.num_heads, -1).transpose(1, 2)
         attn = q @ k.transpose(-1, -2)  # [bsz, head, n, n]
-        attn_probs = softmax_dropout(
-            attn.view(-1, n_node, n_node) + attn_bias, 0.1, self.training
-        ).view(bsz, self.num_heads, n_node, n_node)
+        attn_probs = softmax_dropout(attn.view(-1, n_node, n_node) + attn_bias, 0.1, self.training).view(
+            bsz, self.num_heads, n_node, n_node
+        )
         rot_attn_probs = attn_probs.unsqueeze(-1) * delta_pos.unsqueeze(1).type_as(
             attn_probs
         )  # [bsz, head, n, n, 3]
@@ -250,9 +243,7 @@ class Graphormer3D(BaseFairseqModel):
     @classmethod
     def add_args(cls, parser):
         """Add model-specific arguments to the parser."""
-        parser.add_argument(
-            "--layers", type=int, metavar="L", help="num encoder layers"
-        )
+        parser.add_argument("--layers", type=int, metavar="L", help="num encoder layers")
         parser.add_argument("--blocks", type=int, metavar="L", help="num blocks")
         parser.add_argument(
             "--embed-dim",
@@ -272,9 +263,7 @@ class Graphormer3D(BaseFairseqModel):
             metavar="A",
             help="num encoder attention heads",
         )
-        parser.add_argument(
-            "--dropout", type=float, metavar="D", help="dropout probability"
-        )
+        parser.add_argument("--dropout", type=float, metavar="D", help="dropout probability")
         parser.add_argument(
             "--attention-dropout",
             type=float,
@@ -315,9 +304,7 @@ class Graphormer3D(BaseFairseqModel):
         self.args = args
         self.atom_types = 64
         self.edge_types = 64 * 64
-        self.atom_encoder = nn.Embedding(
-            self.atom_types, self.args.embed_dim, padding_idx=0
-        )
+        self.atom_encoder = nn.Embedding(self.atom_types, self.args.embed_dim, padding_idx=0)
         self.tag_encoder = nn.Embedding(3, self.args.embed_dim)
         self.input_dropout = self.args.input_dropout
         self.layers = nn.ModuleList(
@@ -336,18 +323,14 @@ class Graphormer3D(BaseFairseqModel):
 
         self.final_ln: Callable[[Tensor], Tensor] = nn.LayerNorm(self.args.embed_dim)
 
-        self.engergy_proj: Callable[[Tensor], Tensor] = NonLinear(
-            self.args.embed_dim, 1
-        )
+        self.engergy_proj: Callable[[Tensor], Tensor] = NonLinear(self.args.embed_dim, 1)
         self.energe_agg_factor: Callable[[Tensor], Tensor] = nn.Embedding(3, 1)
         nn.init.normal_(self.energe_agg_factor.weight, 0, 0.01)
 
         K = self.args.num_kernel
 
         self.gbf: Callable[[Tensor, Tensor], Tensor] = GaussianLayer(K, self.edge_types)
-        self.bias_proj: Callable[[Tensor], Tensor] = NonLinear(
-            K, self.args.attention_heads
-        )
+        self.bias_proj: Callable[[Tensor], Tensor] = NonLinear(K, self.args.attention_heads)
         self.edge_proj: Callable[[Tensor], Tensor] = nn.Linear(K, self.args.embed_dim)
         self.node_proc: Callable[[Tensor, Tensor, Tensor], Tensor] = NodeTaskHead(
             self.args.embed_dim, self.args.attention_heads
@@ -365,31 +348,21 @@ class Graphormer3D(BaseFairseqModel):
         dist: Tensor = delta_pos.norm(dim=-1)
         delta_pos /= dist.unsqueeze(-1) + 1e-5
 
-        edge_type = atoms.view(n_graph, n_node, 1) * self.atom_types + atoms.view(
-            n_graph, 1, n_node
-        )
+        edge_type = atoms.view(n_graph, n_node, 1) * self.atom_types + atoms.view(n_graph, 1, n_node)
 
         gbf_feature = self.gbf(dist, edge_type)
-        edge_features = gbf_feature.masked_fill(
-            padding_mask.unsqueeze(1).unsqueeze(-1), 0.0
-        )
+        edge_features = gbf_feature.masked_fill(padding_mask.unsqueeze(1).unsqueeze(-1), 0.0)
 
         graph_node_feature = (
-            self.tag_encoder(tags)
-            + self.atom_encoder(atoms)
-            + self.edge_proj(edge_features.sum(dim=-2))
+            self.tag_encoder(tags) + self.atom_encoder(atoms) + self.edge_proj(edge_features.sum(dim=-2))
         )
 
         # ===== MAIN MODEL =====
-        output = F.dropout(
-            graph_node_feature, p=self.input_dropout, training=self.training
-        )
+        output = F.dropout(graph_node_feature, p=self.input_dropout, training=self.training)
         output = output.transpose(0, 1).contiguous()
 
         graph_attn_bias = self.bias_proj(gbf_feature).permute(0, 3, 1, 2).contiguous()
-        graph_attn_bias.masked_fill_(
-            padding_mask.unsqueeze(1).unsqueeze(2), float("-inf")
-        )
+        graph_attn_bias.masked_fill_(padding_mask.unsqueeze(1).unsqueeze(2), float("-inf"))
 
         graph_attn_bias = graph_attn_bias.view(-1, n_node, n_node)
         for _ in range(self.args.blocks):
@@ -400,9 +373,7 @@ class Graphormer3D(BaseFairseqModel):
         output = output.transpose(0, 1)
 
         eng_output = F.dropout(output, p=0.1, training=self.training)
-        eng_output = (
-            self.engergy_proj(eng_output) * self.energe_agg_factor(tags)
-        ).flatten(-2)
+        eng_output = (self.engergy_proj(eng_output) * self.energe_agg_factor(tags)).flatten(-2)
         output_mask = (
             tags > 0
         ) & real_mask  # no need to consider padding, since padding has tag 0, real_mask False

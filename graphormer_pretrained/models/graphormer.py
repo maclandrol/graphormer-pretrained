@@ -47,9 +47,7 @@ class GraphormerModel(FairseqEncoderModel):
     def add_args(parser):
         """Add model-specific arguments to the parser."""
         # Arguments related to dropout
-        parser.add_argument(
-            "--dropout", type=float, metavar="D", help="dropout probability"
-        )
+        parser.add_argument("--dropout", type=float, metavar="D", help="dropout probability")
         parser.add_argument(
             "--attention-dropout",
             type=float,
@@ -70,9 +68,7 @@ class GraphormerModel(FairseqEncoderModel):
             metavar="N",
             help="encoder embedding dimension for FFN",
         )
-        parser.add_argument(
-            "--encoder-layers", type=int, metavar="N", help="num encoder layers"
-        )
+        parser.add_argument("--encoder-layers", type=int, metavar="N", help="num encoder layers")
         parser.add_argument(
             "--encoder-attention-heads",
             type=int,
@@ -102,9 +98,7 @@ class GraphormerModel(FairseqEncoderModel):
             action="store_true",
             help="if set, disables positional embeddings" " (outside self attention)",
         )
-        parser.add_argument(
-            "--max-positions", type=int, help="number of positional embeddings to learn"
-        )
+        parser.add_argument("--max-positions", type=int, help="number of positional embeddings to learn")
 
         # Arguments related to parameter initialization
         parser.add_argument(
@@ -181,13 +175,9 @@ class GraphormerEncoder(FairseqEncoder):
         # Remove head is set to true during fine-tuning
         self.load_softmax = not getattr(args, "remove_head", False)
 
-        self.masked_lm_pooler = nn.Linear(
-            args.encoder_embed_dim, args.encoder_embed_dim
-        )
+        self.masked_lm_pooler = nn.Linear(args.encoder_embed_dim, args.encoder_embed_dim)
 
-        self.lm_head_transform_weight = nn.Linear(
-            args.encoder_embed_dim, args.encoder_embed_dim
-        )
+        self.lm_head_transform_weight = nn.Linear(args.encoder_embed_dim, args.encoder_embed_dim)
         self.activation_fn = utils.get_activation_fn(args.activation_fn)
         self.layer_norm = LayerNorm(args.encoder_embed_dim)
 
@@ -196,9 +186,7 @@ class GraphormerEncoder(FairseqEncoder):
             self.lm_output_learned_bias = nn.Parameter(torch.zeros(1))
 
             if not self.share_input_output_embed:
-                self.embed_out = nn.Linear(
-                    args.encoder_embed_dim, args.num_classes, bias=False
-                )
+                self.embed_out = nn.Linear(args.encoder_embed_dim, args.num_classes, bias=False)
             else:
                 raise NotImplementedError
 
@@ -222,9 +210,7 @@ class GraphormerEncoder(FairseqEncoder):
         x = self.layer_norm(self.activation_fn(self.lm_head_transform_weight(x)))
 
         # project back to size of vocabulary
-        if self.share_input_output_embed and hasattr(
-            self.graph_encoder.embed_tokens, "weight"
-        ):
+        if self.share_input_output_embed and hasattr(self.graph_encoder.embed_tokens, "weight"):
             x = F.linear(x, self.graph_encoder.embed_tokens.weight)
         elif self.embed_out is not None:
             x = self.embed_out(x)
@@ -256,12 +242,8 @@ def base_architecture(args):
     args.encoder_attention_heads = getattr(args, "encoder_attention_heads", 8)
 
     args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 1024)
-    args.share_encoder_input_output_embed = getattr(
-        args, "share_encoder_input_output_embed", False
-    )
-    args.no_token_positional_embeddings = getattr(
-        args, "no_token_positional_embeddings", False
-    )
+    args.share_encoder_input_output_embed = getattr(args, "share_encoder_input_output_embed", False)
+    args.no_token_positional_embeddings = getattr(args, "no_token_positional_embeddings", False)
 
     args.apply_graphormer_init = getattr(args, "apply_graphormer_init", False)
 
@@ -298,12 +280,8 @@ def graphormer_base_architecture(args):
     args.activation_fn = getattr(args, "activation_fn", "gelu")
     args.encoder_normalize_before = getattr(args, "encoder_normalize_before", True)
     args.apply_graphormer_init = getattr(args, "apply_graphormer_init", True)
-    args.share_encoder_input_output_embed = getattr(
-        args, "share_encoder_input_output_embed", False
-    )
-    args.no_token_positional_embeddings = getattr(
-        args, "no_token_positional_embeddings", False
-    )
+    args.share_encoder_input_output_embed = getattr(args, "share_encoder_input_output_embed", False)
+    args.no_token_positional_embeddings = getattr(args, "no_token_positional_embeddings", False)
     base_architecture(args)
 
 
@@ -319,12 +297,8 @@ def graphormer_slim_architecture(args):
     args.activation_fn = getattr(args, "activation_fn", "gelu")
     args.encoder_normalize_before = getattr(args, "encoder_normalize_before", True)
     args.apply_graphormer_init = getattr(args, "apply_graphormer_init", True)
-    args.share_encoder_input_output_embed = getattr(
-        args, "share_encoder_input_output_embed", False
-    )
-    args.no_token_positional_embeddings = getattr(
-        args, "no_token_positional_embeddings", False
-    )
+    args.share_encoder_input_output_embed = getattr(args, "share_encoder_input_output_embed", False)
+    args.no_token_positional_embeddings = getattr(args, "no_token_positional_embeddings", False)
     base_architecture(args)
 
 
@@ -340,10 +314,6 @@ def graphormer_large_architecture(args):
     args.activation_fn = getattr(args, "activation_fn", "gelu")
     args.encoder_normalize_before = getattr(args, "encoder_normalize_before", True)
     args.apply_graphormer_init = getattr(args, "apply_graphormer_init", True)
-    args.share_encoder_input_output_embed = getattr(
-        args, "share_encoder_input_output_embed", False
-    )
-    args.no_token_positional_embeddings = getattr(
-        args, "no_token_positional_embeddings", False
-    )
+    args.share_encoder_input_output_embed = getattr(args, "share_encoder_input_output_embed", False)
+    args.no_token_positional_embeddings = getattr(args, "no_token_positional_embeddings", False)
     base_architecture(args)

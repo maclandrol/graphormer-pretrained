@@ -63,9 +63,7 @@ class AMPOptimizer(optim.FairseqOptimizer):
                     ).format(self.min_loss_scale, new_loss_scale)
                 )
             else:
-                logger.info(
-                    "AMP: overflow detected, setting scale to " f"to {new_loss_scale}"
-                )
+                logger.info("AMP: overflow detected, setting scale to " f"to {new_loss_scale}")
         return grad_norm
 
     @property

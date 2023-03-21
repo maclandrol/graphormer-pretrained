@@ -115,8 +115,4 @@ class PYGDatasetLookupTable:
                 test_set,
             )
         else:
-            return (
-                None
-                if inner_dataset is None
-                else GraphormerPYGDataset(inner_dataset, seed)
-            )
+            return None if inner_dataset is None else GraphormerPYGDataset(inner_dataset, seed)

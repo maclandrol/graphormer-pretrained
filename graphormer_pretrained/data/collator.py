@@ -74,8 +74,7 @@ def collator(
         items = [
             item
             for item in items
-            if (item is not None)
-            and (not ignore_large_graph or item.x.size(0) <= max_node)
+            if (item is not None) and (not ignore_large_graph or item.x.size(0) <= max_node)
         ]
 
     items = [
@@ -109,27 +108,17 @@ def collator(
 
     max_node_num = max(i.size(0) for i in xs)
     if max_node is not None and max_node_num > max_node and not ignore_large_graph:
-        raise ValueError(
-            f"max_node_num {max_node_num} > max_node {max_node}, please increase max_node size"
-        )
+        raise ValueError(f"max_node_num {max_node_num} > max_node {max_node}, please increase max_node size")
 
     if max_node is not None:
         max_node_num = max_node
     max_dist = max(i.size(-2) for i in edge_inputs)
     y = torch.cat(ys)
     x = torch.cat([pad_2d_unsqueeze(i, max_node_num) for i in xs])
-    edge_input = torch.cat(
-        [pad_3d_unsqueeze(i, max_node_num, max_node_num, max_dist) for i in edge_inputs]
-    )
-    attn_bias = torch.cat(
-        [pad_attn_bias_unsqueeze(i, max_node_num + 1) for i in attn_biases]
-    )
-    attn_edge_type = torch.cat(
-        [pad_edge_type_unsqueeze(i, max_node_num) for i in attn_edge_types]
-    )
-    spatial_pos = torch.cat(
-        [pad_spatial_pos_unsqueeze(i, max_node_num) for i in spatial_poses]
-    )
+    edge_input = torch.cat([pad_3d_unsqueeze(i, max_node_num, max_node_num, max_dist) for i in edge_inputs])
+    attn_bias = torch.cat([pad_attn_bias_unsqueeze(i, max_node_num + 1) for i in attn_biases])
+    attn_edge_type = torch.cat([pad_edge_type_unsqueeze(i, max_node_num) for i in attn_edge_types])
+    spatial_pos = torch.cat([pad_spatial_pos_unsqueeze(i, max_node_num) for i in spatial_poses])
     in_degree = torch.cat([pad_1d_unsqueeze(i, max_node_num) for i in in_degrees])
 
     return dict(

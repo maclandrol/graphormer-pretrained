@@ -19,9 +19,7 @@ from graphormer_pretrained.data.ogb_datasets import OGBDatasetLookupTable
 
 
 class BatchedDataDataset(FairseqDataset):
-    def __init__(
-        self, dataset, max_node=128, multi_hop_max_dist=5, spatial_pos_max=1024
-    ):
+    def __init__(self, dataset, max_node=128, multi_hop_max_dist=5, spatial_pos_max=1024):
         super().__init__()
         self.dataset = dataset
         self.max_node = max_node

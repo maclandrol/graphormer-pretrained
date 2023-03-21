@@ -45,9 +45,7 @@ class GraphormerGraphEncoderLayer(nn.Module):
         self.q_noise = q_noise
         self.qn_block_size = qn_block_size
 
-        self.dropout_module = FairseqDropout(
-            dropout, module_name=self.__class__.__name__
-        )
+        self.dropout_module = FairseqDropout(dropout, module_name=self.__class__.__name__)
         self.activation_dropout_module = FairseqDropout(
             activation_dropout, module_name=self.__class__.__name__
         )

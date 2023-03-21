@@ -41,14 +41,10 @@ class MultiheadAttention(nn.Module):
         self.qkv_same_dim = self.kdim == embed_dim and self.vdim == embed_dim
 
         self.num_heads = num_heads
-        self.dropout_module = FairseqDropout(
-            dropout, module_name=self.__class__.__name__
-        )
+        self.dropout_module = FairseqDropout(dropout, module_name=self.__class__.__name__)
 
         self.head_dim = embed_dim // num_heads
-        assert (
-            self.head_dim * num_heads == self.embed_dim
-        ), "embed_dim must be divisible by num_heads"
+        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
         self.scaling = self.head_dim**-0.5
 
         self.self_attention = self_attention
@@ -59,19 +55,11 @@ class MultiheadAttention(nn.Module):
             "Self-attention requires query, key and " "value to be of the same size"
         )
 
-        self.k_proj = quant_noise(
-            nn.Linear(self.kdim, embed_dim, bias=bias), q_noise, qn_block_size
-        )
-        self.v_proj = quant_noise(
-            nn.Linear(self.vdim, embed_dim, bias=bias), q_noise, qn_block_size
-        )
-        self.q_proj = quant_noise(
-            nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size
-        )
+        self.k_proj = quant_noise(nn.Linear(self.kdim, embed_dim, bias=bias), q_noise, qn_block_size)
+        self.v_proj = quant_noise(nn.Linear(self.vdim, embed_dim, bias=bias), q_noise, qn_block_size)
+        self.q_proj = quant_noise(nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size)
 
-        self.out_proj = quant_noise(
-            nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size
-        )
+        self.out_proj = quant_noise(nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size)
 
         self.reset_parameters()
 
@@ -144,23 +132,11 @@ class MultiheadAttention(nn.Module):
         v = self.v_proj(query)
         q *= self.scaling
 
-        q = (
-            q.contiguous()
-            .view(tgt_len, bsz * self.num_heads, self.head_dim)
-            .transpose(0, 1)
-        )
+        q = q.contiguous().view(tgt_len, bsz * self.num_heads, self.head_dim).transpose(0, 1)
         if k is not None:
-            k = (
-                k.contiguous()
-                .view(-1, bsz * self.num_heads, self.head_dim)
-                .transpose(0, 1)
-            )
+            k = k.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
         if v is not None:
-            v = (
-                v.contiguous()
-                .view(-1, bsz * self.num_heads, self.head_dim)
-                .transpose(0, 1)
-            )
+            v = v.contiguous().view(-1, bsz * self.num_heads, self.head_dim).transpose(0, 1)
 
         assert k is not None
         assert k.size(1) == src_len
@@ -197,9 +173,7 @@ class MultiheadAttention(nn.Module):
         if before_softmax:
             return attn_weights, v
 
-        attn_weights_float = utils.softmax(
-            attn_weights, dim=-1, onnx_trace=self.onnx_trace
-        )
+        attn_weights_float = utils.softmax(attn_weights, dim=-1, onnx_trace=self.onnx_trace)
         attn_weights = attn_weights_float.type_as(attn_weights)
         attn_probs = self.dropout_module(attn_weights)
 
@@ -212,9 +186,7 @@ class MultiheadAttention(nn.Module):
 
         attn_weights: Optional[Tensor] = None
         if need_weights:
-            attn_weights = attn_weights_float.view(
-                bsz, self.num_heads, tgt_len, src_len
-            ).transpose(1, 0)
+            attn_weights = attn_weights_float.view(bsz, self.num_heads, tgt_len, src_len).transpose(1, 0)
             if not need_head_weights:
                 # average attention weights over heads
                 attn_weights = attn_weights.mean(dim=0)
@@ -242,9 +214,7 @@ class MultiheadAttention(nn.Module):
                 if k_bias in state_dict.keys():
                     dim = int(state_dict[k].shape[0] / 3)
                     items_to_add[prefix + "q_proj.bias"] = state_dict[k_bias][:dim]
-                    items_to_add[prefix + "k_proj.bias"] = state_dict[k_bias][
-                        dim : 2 * dim
-                    ]
+                    items_to_add[prefix + "k_proj.bias"] = state_dict[k_bias][dim : 2 * dim]
                     items_to_add[prefix + "v_proj.bias"] = state_dict[k_bias][2 * dim :]
 
                     keys_to_remove.append(prefix + "in_proj_bias")

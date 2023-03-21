@@ -30,9 +30,7 @@ class GraphPredictionMulticlassCrossEntropy(FairseqCriterion):
         logits = model(**sample["net_input"])
         logits = logits[:, 0, :]
         targets = model.get_targets(sample, [logits])[: logits.size(0)]
-        ncorrect = (
-            torch.argmax(logits, dim=-1).reshape(-1) == targets.reshape(-1)
-        ).sum()
+        ncorrect = (torch.argmax(logits, dim=-1).reshape(-1) == targets.reshape(-1)).sum()
 
         loss = functional.cross_entropy(logits, targets.reshape(-1), reduction="sum")
 
@@ -54,9 +52,7 @@ class GraphPredictionMulticlassCrossEntropy(FairseqCriterion):
         metrics.log_scalar("loss", loss_sum / sample_size, sample_size, round=3)
         if len(logging_outputs) > 0 and "ncorrect" in logging_outputs[0]:
             ncorrect = sum(log.get("ncorrect", 0) for log in logging_outputs)
-            metrics.log_scalar(
-                "accuracy", 100.0 * ncorrect / sample_size, sample_size, round=1
-            )
+            metrics.log_scalar("accuracy", 100.0 * ncorrect / sample_size, sample_size, round=1)
 
     @staticmethod
     def logging_outputs_can_be_summed() -> bool:
@@ -69,9 +65,7 @@ class GraphPredictionMulticlassCrossEntropy(FairseqCriterion):
 
 
 @register_criterion("multiclass_cross_entropy_with_flag", dataclass=FairseqDataclass)
-class GraphPredictionMulticlassCrossEntropyWithFlag(
-    GraphPredictionMulticlassCrossEntropy
-):
+class GraphPredictionMulticlassCrossEntropyWithFlag(GraphPredictionMulticlassCrossEntropy):
     """
     Implementation for the multi-class log loss used in graphormer model training.
     """
@@ -93,9 +87,7 @@ class GraphPredictionMulticlassCrossEntropyWithFlag(
         logits = model(**sample["net_input"], perturb=perturb)
         logits = logits[:, 0, :]
         targets = model.get_targets(sample, [logits])[: logits.size(0)]
-        ncorrect = (
-            torch.argmax(logits, dim=-1).reshape(-1) == targets.reshape(-1)
-        ).sum()
+        ncorrect = (torch.argmax(logits, dim=-1).reshape(-1) == targets.reshape(-1)).sum()
 
         loss = functional.cross_entropy(logits, targets.reshape(-1), reduction="sum")
 
