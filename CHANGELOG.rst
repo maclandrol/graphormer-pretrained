@@ -4,6 +4,14 @@ graphormer-pretrained Change Log
 
 .. current developments
 
+v0.2.0
+====================
+
+**Authors:**
+
+
+
+
 v0.1.3
 ====================
 
