@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel", "cython", "numpy"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "graphormer_pretrained"
+name = "graphormer-pretrained"
 description = "Packaging of Graphormer is a deep learning package by Microsoft that allows researchers and developers to train custom models for molecule modeling tasks."
 version = "0.2.0" # project
 authors = [
