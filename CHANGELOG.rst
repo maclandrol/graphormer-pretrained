@@ -4,6 +4,15 @@ graphormer-pretrained Change Log
 
 .. current developments
 
+v0.2.1
+====================
+
+**Authors:**
+
+* Hadrien Mary
+
+
+
 v0.2.0
 ====================
 
