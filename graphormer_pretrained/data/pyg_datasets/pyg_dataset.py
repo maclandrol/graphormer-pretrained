@@ -100,5 +100,11 @@ class GraphormerPYGDataset(Dataset):
         else:
             raise TypeError("index to a GraphormerPYGDataset can only be an integer.")
 
+    def get(self, idx):
+        return self[idx]
+
+    def len(self):
+        return self.num_data
+
     def __len__(self):
         return self.num_data
