@@ -4,6 +4,20 @@ graphormer-pretrained Change Log
 
 .. current developments
 
+v0.2.2
+====================
+
+**Added:**
+
+* Support for recent versions of pyg that changed Dataset structure
+
+**Authors:**
+
+* Emmanuel Noutahi
+* Hadrien Mary
+
+
+
 v0.2.1
 ====================
 
