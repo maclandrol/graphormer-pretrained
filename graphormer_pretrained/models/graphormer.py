@@ -6,7 +6,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import logging
 
 import torch
 import torch.nn as nn
@@ -25,8 +24,7 @@ from fairseq.modules import (
 from graphormer_pretrained.utils.loader import load_pretrained_model
 from graphormer_pretrained.utils.common import safe_hasattr
 from graphormer_pretrained.modules import init_graphormer_params, GraphormerGraphEncoder
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 
 @register_model("graphormer")
@@ -183,6 +181,7 @@ class GraphormerEncoder(FairseqEncoder):
 
         self.lm_output_learned_bias = None
         if self.load_softmax:
+            print("WHY are we loading softmax ?")
             self.lm_output_learned_bias = nn.Parameter(torch.zeros(1))
 
             if not self.share_input_output_embed:
@@ -208,15 +207,15 @@ class GraphormerEncoder(FairseqEncoder):
             raise NotImplementedError
 
         x = self.layer_norm(self.activation_fn(self.lm_head_transform_weight(x)))
-
         # project back to size of vocabulary
         if self.share_input_output_embed and hasattr(self.graph_encoder.embed_tokens, "weight"):
+            # EN: we should never reach this
             x = F.linear(x, self.graph_encoder.embed_tokens.weight)
         elif self.embed_out is not None:
+            # EN: we should never reach this
             x = self.embed_out(x)
         if self.lm_output_learned_bias is not None:
             x = x + self.lm_output_learned_bias
-
         return x
 
     def max_nodes(self):
