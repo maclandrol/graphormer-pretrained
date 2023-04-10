@@ -8,17 +8,16 @@ def test_embeddings():
     smiles = dm.data.freesolv()["smiles"].sample(n=100).values
     embeddings, graph_rep, padding = model(smiles)
 
-    model2 = GraphormerEmbeddingsExtractor(max_nodes=25)
-    embeddings2, graph_rep2, padding2 = model2(smiles)
+    # model2 = GraphormerEmbeddingsExtractor(max_nodes=25)
+    # embeddings2, graph_rep2, padding2 = model2(smiles)
 
     model3 = GraphormerEmbeddingsExtractor(max_nodes=25, concat_layers=[-1, -2])
-    embeddings3, graph_rep3, _ = model3(smiles)
+    embeddings3, graph_rep3, padding3 = model3(smiles)
 
-    assert embeddings.shape[0] == embeddings2.shape[0], "Unexpected embedding number"
-    assert embeddings.shape[-1] == embeddings2.shape[-1], "Unexpected embedding shape"
+    assert embeddings.shape[0] == embeddings3.shape[0], "Unexpected embedding number"
+    assert embeddings.shape[-1] * 2 == embeddings3.shape[-1], "Unexpected embedding shape"
     assert len(embeddings.shape) == 3, "Expected 3 dim tensor"
     assert torch.is_tensor(embeddings), f"Expected tensor, got type {type(embeddings)}"
-    assert graph_rep.shape == graph_rep2.shape
-    assert torch.allclose(padding.sum(dim=-1), padding2.sum(dim=-1))
-    assert embeddings3.shape[-1] == embeddings2.shape[-1] * 2, "Unexpected embedding shape after concat"
-    assert torch.allclose(graph_rep2, graph_rep3), "Graph representation do not match"
+    assert graph_rep.shape == graph_rep3.shape
+    assert torch.allclose(padding.sum(dim=-1), padding3.sum(dim=-1))
+    assert torch.allclose(graph_rep, graph_rep3), "Graph representation do not match"
