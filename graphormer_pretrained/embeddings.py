@@ -72,7 +72,7 @@ class GraphormerEmbeddingsExtractor:
 
     def __call__(self, smiles: List[str]):
         """Predict molecular embeddings from a list of SMILES strings"""
-        batch_graphs =  smiles
+        batch_graphs = smiles
         if isinstance(smiles, (list, str)) and isinstance(smiles[0], str):
             batch_graphs = self._convert(smiles)
         encoder = self.model.encoder
