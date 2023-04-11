@@ -19,6 +19,7 @@ dependencies = [
     "torch",
     "torch-geometric",
     "ogb",
+    "tensorboardX",
     "fairseq",
     "lmdb",
     "datamol",
