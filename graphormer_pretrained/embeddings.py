@@ -1,6 +1,9 @@
 from typing import Optional
 from typing import List
+
 import torch
+import datamol as dm
+from collections.abc import Mapping
 from graphormer_pretrained.data.collator import collator
 from graphormer_pretrained.data.smiles_dataset import GraphormerInferenceDataset
 from graphormer_pretrained.models.graphormer import GraphormerModel
@@ -73,7 +76,7 @@ class GraphormerEmbeddingsExtractor:
     def __call__(self, smiles: List[str]):
         """Predict molecular embeddings from a list of SMILES strings"""
         batch_graphs = smiles
-        if isinstance(smiles, (list, str)) and isinstance(smiles[0], str):
+        if not isinstance(smiles, Mapping) and isinstance(smiles[0], (str, dm.Mol)):
             batch_graphs = self._convert(smiles)
         encoder = self.model.encoder
         inner_states, graph_rep = encoder.graph_encoder(
