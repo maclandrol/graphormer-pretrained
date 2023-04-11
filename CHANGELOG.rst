@@ -4,6 +4,15 @@ graphormer-pretrained Change Log
 
 .. current developments
 
+v0.2.3
+====================
+
+**Authors:**
+
+* Emmanuel Noutahi
+
+
+
 v0.2.2
 ====================
 
