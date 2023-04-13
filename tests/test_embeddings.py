@@ -8,9 +8,6 @@ def test_embeddings():
     smiles = dm.data.freesolv()["smiles"].sample(n=10).values
     embeddings, graph_rep, padding = model(smiles)
 
-    # model2 = GraphormerEmbeddingsExtractor(max_nodes=25)
-    # embeddings2, graph_rep2, padding2 = model2(smiles)
-
     model3 = GraphormerEmbeddingsExtractor(max_nodes=25, concat_layers=[-1, -2])
     embeddings3, graph_rep3, padding3 = model3(smiles)
 
