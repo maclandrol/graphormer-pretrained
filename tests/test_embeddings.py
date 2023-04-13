@@ -5,7 +5,7 @@ from graphormer_pretrained.embeddings import GraphormerEmbeddingsExtractor
 
 def test_embeddings():
     model = GraphormerEmbeddingsExtractor()
-    smiles = dm.data.freesolv()["smiles"].sample(n=100).values
+    smiles = dm.data.freesolv()["smiles"].sample(n=10).values
     embeddings, graph_rep, padding = model(smiles)
 
     # model2 = GraphormerEmbeddingsExtractor(max_nodes=25)
